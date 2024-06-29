@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1063013605497",
+    "project_id": "pdm-trabalhofinal",
+    "storage_bucket": "pdm-trabalhofinal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1063013605497:android:06d0e323350488275c74a8",
+        "android_client_info": {
+          "package_name": "pdm.compose.trabalhofinalpdm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAltmV9Bf4H0rmJBAfTxkgifqgzXhYXaow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
