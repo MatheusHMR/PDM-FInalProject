@@ -14,19 +14,21 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pdm.compose.trabalhofinalpdm.data.DataProvider
-import pdm.compose.trabalhofinalpdm.model.toAttributeMap
+import pdm.compose.trabalhofinalpdm.model.toMap
 import pdm.compose.trabalhofinalpdm.ui.components.TextLabel
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
-import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
-import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
+import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.ProductViewModelFactory
 
 @Composable
 fun DetailedProductScreen(
     productId: String,
     navController: NavController
 ) {
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(productRepository = DataProvider.productRepository)
+    val viewModel: ProductViewModel = viewModel(
+        factory = ProductViewModelFactory(
+            productRepository = DataProvider.productRepository
+        )
     )
     val products by viewModel.products.collectAsState()
     val product = products.find { it.productId == productId }
@@ -69,7 +71,7 @@ fun DetailedProductScreen(
             }
 
             if (product != null) {
-                val productAttributes = product.toAttributeMap()
+                val productAttributes = product.toMap()
 
                 TextTitle(
                     text = "Product Details",
@@ -86,7 +88,7 @@ fun DetailedProductScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             TextLabel(text = name)
-                            ProductAttributeCard(value = value)
+                            ProductAttributeCard(value = value.toString())
                         }
                     }
                 }

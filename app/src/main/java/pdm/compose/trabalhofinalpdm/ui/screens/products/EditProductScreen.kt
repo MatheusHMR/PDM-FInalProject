@@ -1,5 +1,6 @@
 package pdm.compose.trabalhofinalpdm.ui.screens.products // Adjust package if needed
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -18,17 +19,24 @@ import pdm.compose.trabalhofinalpdm.ui.components.CustomOutlinedTextField
 import pdm.compose.trabalhofinalpdm.ui.components.DropdownMenuComponent
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
 import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.ProductViewModelFactory
 
 @Composable
 fun EditProductScreen(productId: String?, navController: NavController) {
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(productRepository = DataProvider.productRepository)
+
+    val viewModel: ProductViewModel = viewModel(
+        factory = ProductViewModelFactory(
+            productRepository = DataProvider.productRepository
+        )
     )
 
     val products by viewModel.products.collectAsState()
     val product = products.find { it.productId == productId }
+    Log.d("EditProductScreen", "Product: $product")
 
+    var productName by remember(product) { mutableStateOf("") }
     var selectedGrainType by remember(product) { mutableStateOf(product?.grainType ?: GrainType.ARABICA_CERRADO) }
     var selectedRoastingPoint by remember(product) {mutableStateOf(product?.roastingPoint ?: RoastingPoint.MEDIUM) }
     var productValue by remember(product) { mutableStateOf(product?.price?.toString() ?: "") }
@@ -58,6 +66,14 @@ fun EditProductScreen(productId: String?, navController: NavController) {
                 }
 
                 TextTitle(text = "Edit Product")
+
+                CustomOutlinedTextField(
+                    value = productName,
+                    onValueChange = { productName = it },
+                    label = "Name",
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardType = KeyboardType.Text
+                )
 
                 // Grain Type Dropdown
                 DropdownMenuComponent(
@@ -95,7 +111,9 @@ fun EditProductScreen(productId: String?, navController: NavController) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = isBlend,
-                        onCheckedChange = { isBlend = it }
+                        onCheckedChange = {
+                            Log.d("EditProductScreen", "Product: ${product}\nCurrent blend: ${isBlend}\nNew blend: $it")
+                            isBlend = it }
                     )
                     Text("Is Blend")
                 }
@@ -114,6 +132,7 @@ fun EditProductScreen(productId: String?, navController: NavController) {
                 Button(
                     onClick = {
                         val updatedProduct = product.copy(
+                            name = productName,
                             grainType = selectedGrainType,
                             roastingPoint = selectedRoastingPoint,
                             price = productValue.toDoubleOrNull() ?: 0.0,

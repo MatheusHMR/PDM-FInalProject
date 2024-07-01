@@ -11,7 +11,7 @@ import pdm.compose.trabalhofinalpdm.data.repository.ProductRepository
 import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
 
 class MainViewModelFactory(
-    private val customerRepository: CustomerRepository? = null,
+//    private val customerRepository: CustomerRepository? = null,
     private val productRepository: ProductRepository? = null,
     private val orderRepository: OrderRepository? = null
 ) : ViewModelProvider.Factory {
@@ -20,8 +20,7 @@ class MainViewModelFactory(
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return MainViewModel(
-                customerRepository = customerRepository,
-                productRepository = productRepository,
+//                productRepository = productRepository,
                 orderRepository = orderRepository
                 ) as T
         }

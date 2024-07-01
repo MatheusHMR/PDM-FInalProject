@@ -35,14 +35,16 @@ import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pdm.compose.trabalhofinalpdm.data.DataProvider
 import pdm.compose.trabalhofinalpdm.ui.components.GenericListItem
+import pdm.compose.trabalhofinalpdm.viewmodel.CustomerViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.CustomerViewModelFactory
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
 
 @ExperimentalMaterial3Api
 @Composable
 fun CustomerScreen(navController: NavController) {
 
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(DataProvider.customerRepository)
+    val viewModel: CustomerViewModel = viewModel(
+        factory = CustomerViewModelFactory(DataProvider.customerRepository)
     )
     val customers by viewModel.customers.collectAsState()
     var selectedCustomer by remember { mutableStateOf<Customer?>(null) }
@@ -61,7 +63,7 @@ fun CustomerScreen(navController: NavController) {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            TextTitle("List of Customers")
+            TextTitle("Customers")
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(customers) { customer ->
                     var expanded by remember { mutableStateOf(false) }

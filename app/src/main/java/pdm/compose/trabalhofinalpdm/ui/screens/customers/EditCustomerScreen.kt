@@ -15,15 +15,17 @@ import pdm.compose.trabalhofinalpdm.data.DataProvider
 import pdm.compose.trabalhofinalpdm.model.Customer
 import pdm.compose.trabalhofinalpdm.ui.components.CustomOutlinedTextField
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
+import pdm.compose.trabalhofinalpdm.viewmodel.CustomerViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.CustomerViewModelFactory
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditCustomerScreen(customerId: String?, navController: NavController) {
 
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(DataProvider.customerRepository)
+    val viewModel: CustomerViewModel = viewModel(
+        factory = CustomerViewModelFactory(DataProvider.customerRepository)
     )
 
     val customers by viewModel.customers.collectAsState()
@@ -61,7 +63,6 @@ fun EditCustomerScreen(customerId: String?, navController: NavController) {
                 TextTitle(text = "Edit Customer")
 
 
-                /*PUT CUSTOMERCPF HERE*/
                 CustomOutlinedTextField(
                     value = customerCpf,
                     onValueChange = { /*Disabled field*/},

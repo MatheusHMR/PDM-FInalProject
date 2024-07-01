@@ -1,7 +1,5 @@
 package pdm.compose.trabalhofinalpdm.ui.screens.products
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,14 +21,18 @@ import pdm.compose.trabalhofinalpdm.ui.components.GenericActionMenu
 import pdm.compose.trabalhofinalpdm.ui.components.GenericListItem
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
 import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.ProductViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(navController: NavController) {
 
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(productRepository = DataProvider.productRepository)
+    val viewModel: ProductViewModel = viewModel(
+        factory = ProductViewModelFactory(
+            productRepository = DataProvider.productRepository
+        )
     )
     val products by viewModel.products.collectAsState()
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
@@ -47,7 +49,7 @@ fun ProductScreen(navController: NavController) {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            TextTitle("List of Products")
+            TextTitle("Products")
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(products) { product ->
                     var expanded by remember { mutableStateOf(false) }
@@ -57,16 +59,16 @@ fun ProductScreen(navController: NavController) {
                         displayContent = {
                             Column {
                                 Text(
-                                    text = "Product: ${product.grainType.name}", // Display relevant product info
+                                    text = "Product: ${product.name}",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp
                                 )
                                 Text(
-                                    text = "Roasting: ${product.roastingPoint.name}", // Display relevant product info
+                                    text = "Grain Type: ${product.grainType.name}",
                                     fontSize = 16.sp
                                 )
                                 Text(
-                                    text = "Price: $${product.price}", // Display relevant product info
+                                    text = "Price: $${product.price}",
                                     fontSize = 16.sp
                                 )
                             }

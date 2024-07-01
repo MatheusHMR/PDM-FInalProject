@@ -19,15 +19,17 @@ import pdm.compose.trabalhofinalpdm.model.Customer
 import pdm.compose.trabalhofinalpdm.ui.components.CustomOutlinedTextField
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
 import pdm.compose.trabalhofinalpdm.ui.components.ThreadLaunchingButton
+import pdm.compose.trabalhofinalpdm.viewmodel.CustomerViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.CustomerViewModelFactory
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCustomerScreen(navController: NavController) {
 
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(DataProvider.customerRepository)
+    val viewModel: CustomerViewModel = viewModel(
+        factory = CustomerViewModelFactory(DataProvider.customerRepository)
     )
 
     var customerCpf by remember { mutableStateOf("") }

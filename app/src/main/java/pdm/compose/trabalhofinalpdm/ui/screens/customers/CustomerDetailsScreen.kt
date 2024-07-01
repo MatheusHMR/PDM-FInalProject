@@ -16,10 +16,10 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pdm.compose.trabalhofinalpdm.ui.components.TextLabel
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
-import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
-import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
 import pdm.compose.trabalhofinalpdm.data.DataProvider
 import pdm.compose.trabalhofinalpdm.model.toAttributeMap
+import pdm.compose.trabalhofinalpdm.viewmodel.CustomerViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.CustomerViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,8 +27,8 @@ fun DetailedCustomerScreen(
     customerId: String,
     navController: NavController
 ) {
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(DataProvider.customerRepository)
+    val viewModel: CustomerViewModel = viewModel(
+        factory = CustomerViewModelFactory(DataProvider.customerRepository)
     )
     val customers by viewModel.customers.collectAsState()
     val customer = customers.find { it.customerId == customerId }
@@ -73,8 +73,8 @@ fun DetailedCustomerScreen(
             if (customer != null) {
                 val customerAttributes = customer.toAttributeMap()
 
-            TextTitle(text = "Customer Details",
-                modifier = Modifier.fillMaxWidth().padding(16.dp))
+                TextTitle(text = "Customer Details",
+                    modifier = Modifier.fillMaxWidth().padding(16.dp))
 
                 Column(
                     modifier = Modifier.padding(4.dp),

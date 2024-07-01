@@ -158,14 +158,13 @@ import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
 fun AddOrderScreen(navController: NavController) {
     val viewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory(
-            productRepository = DataProvider.productRepository,
+//            productRepository = DataProvider.productRepository,
             orderRepository = DataProvider.orderRepository,
-            customerRepository = DataProvider.customerRepository
         )
     )
 
-    val customers by viewModel.customers.collectAsState()
-    val products by viewModel.products.collectAsState()
+//    val customers by viewModel.customers.collectAsState()
+//    val products by viewModel.products.collectAsState()
 
     var selectedCustomer by remember { mutableStateOf<Customer?>(null) }
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
@@ -173,9 +172,9 @@ fun AddOrderScreen(navController: NavController) {
     var orderItems by remember { mutableStateOf(mutableListOf<OrderItem>()) }
     var currentStep by remember { mutableStateOf(1) }
 
-    val customerOptions = customers.map { "${it.name} - ${it.cpf}" }
-    val productOptions = products.map { it.productId }
-    val productImages = products.map { it.imageUrl }
+//    val customerOptions = customers.map { "${it.name} - ${it.cpf}" }
+//    val productOptions = products.map { it.productId }
+//    val productImages = products.map { it.imageUrl }
 
     Scaffold(
         floatingActionButton = {
@@ -206,15 +205,15 @@ fun AddOrderScreen(navController: NavController) {
             ) {
                 TextTitle("Add New Order")
 
-                DropdownMenuComponent(
-                    label = "Select Product",
-                    selectedOption = selectedProduct?.productId ?: "Select Product",
-                    options = productOptions,
-                    onSelectionChange = { selectedOption ->
-                        selectedProduct = products.find { it.productId == selectedOption }
-                    },
-                    imageUrls = productImages
-                )
+//                DropdownMenuComponent(
+//                    label = "Select Product",
+//                    selectedOption = selectedProduct?.productId ?: "Select Product",
+//                    options = productOptions,
+//                    onSelectionChange = { selectedOption ->
+//                        selectedProduct = products.find { it.productId == selectedOption }
+//                    },
+//                    imageUrls = productImages
+//                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -271,14 +270,14 @@ fun AddOrderScreen(navController: NavController) {
             ) {
                 TextTitle("Finalize Order")
 
-                DropdownMenuComponent(
-                    label = "Select Customer",
-                    selectedOption = selectedCustomer?.let { "${it.name} - ${it.cpf}" } ?: "Select Customer",
-                    options = customerOptions,
-                    onSelectionChange = { selectedOption ->
-                        selectedCustomer = customers.find { "${it.name} - ${it.cpf}" == selectedOption }
-                    }
-                )
+//                DropdownMenuComponent(
+//                    label = "Select Customer",
+//                    selectedOption = selectedCustomer?.let { "${it.name} - ${it.cpf}" } ?: "Select Customer",
+//                    options = customerOptions,
+//                    onSelectionChange = { selectedOption ->
+//                        selectedCustomer = customers.find { "${it.name} - ${it.cpf}" == selectedOption }
+//                    }
+//                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 

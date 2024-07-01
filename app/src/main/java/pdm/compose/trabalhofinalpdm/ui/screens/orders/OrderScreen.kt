@@ -26,7 +26,7 @@ import java.text.DateFormat
 fun OrderScreen(navController: NavController) {
     val viewModel: MainViewModel = viewModel(
         factory = MainViewModelFactory(
-            customerRepository = DataProvider.customerRepository,
+//            customerRepository = DataProvider.customerRepository,
             orderRepository = DataProvider.orderRepository
         )
     )
@@ -53,7 +53,7 @@ fun OrderScreen(navController: NavController) {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            TextTitle("List of Orders")
+            TextTitle("Orders")
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
@@ -63,8 +63,8 @@ fun OrderScreen(navController: NavController) {
                     GenericListItem(
                         item = order,
                         displayContent = { item ->
-                            val customers by viewModel.customers.collectAsState()
-                            val customer = customers.find { it.customerId == item.customerId }
+//                            val customers by viewModel.customers.collectAsState()
+//                            val customer = customers.find { it.customerId == item.customerId }
                             Column {
                                 Text(
                                     text = "Order: ${item.orderId}",
@@ -75,10 +75,10 @@ fun OrderScreen(navController: NavController) {
                                     text = "Date: ${item.date}",
                                     fontSize = 16.sp
                                 )
-                                Text(
-                                    text = "Buyer (customer): ${customer?.name ?: "Loading..."}",
-                                    fontSize = 16.sp
-                                )
+//                                Text(
+//                                    text = "Buyer (customer): ${customer?.name ?: "Loading..."}",
+//                                    fontSize = 16.sp
+//                                )
                             }
                         },
                         onCardClick = { navController.navigate("orders/detailedOrder/${order.orderId}") },

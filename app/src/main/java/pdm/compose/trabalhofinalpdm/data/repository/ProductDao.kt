@@ -1,9 +1,11 @@
 package pdm.compose.trabalhofinalpdm.data.repository
 
+import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import pdm.compose.trabalhofinalpdm.model.Product
+import pdm.compose.trabalhofinalpdm.model.toMap
 
 class ProductDao (
     firestore: FirebaseFirestore,
@@ -14,7 +16,15 @@ class ProductDao (
     suspend fun addProduct(product: Product) {
         val newDocRef = collection.document()
         val productWithId = product.copy(productId = newDocRef.id)
-        newDocRef.set(productWithId).await()
+        val productMap = productWithId.toMap()
+        newDocRef.set(productWithId).addOnSuccessListener {
+            Log.d("ProductRepository", "Product added with ID: ${productWithId.productId}")
+            Log.d("ProductRepository", "Product added with blend: ${productWithId.isBlend}")
+        }
+            .addOnFailureListener { e ->
+                Log.w("ProductRepository", "Error adding product", e)
+            }
+            .await()
     }
 
 }

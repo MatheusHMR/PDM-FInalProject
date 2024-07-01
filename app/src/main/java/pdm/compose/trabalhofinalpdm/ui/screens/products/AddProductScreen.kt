@@ -26,8 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pdm.compose.trabalhofinalpdm.data.DataProvider
@@ -39,16 +41,22 @@ import pdm.compose.trabalhofinalpdm.ui.components.DropdownMenuComponent
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
 import pdm.compose.trabalhofinalpdm.ui.components.ThreadLaunchingButton
 import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.ProductViewModelFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductScreen(navController: NavController) {
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(productRepository = DataProvider.productRepository)
+
+    val viewModel: ProductViewModel = viewModel(
+        factory = ProductViewModelFactory(
+            productRepository = DataProvider.productRepository
+        )
     )
 
+    var productName by remember { mutableStateOf("")}
     var selectedGrainType by remember { mutableStateOf(GrainType.ARABICA_CERRADO)}
     var selectedRoastingPoint by remember { mutableStateOf(RoastingPoint.MEDIUM) }
     var productPrice by remember { mutableStateOf("") }
@@ -76,7 +84,19 @@ fun AddProductScreen(navController: NavController) {
                 }
             }
 
-            TextTitle(text = "Add New Product")
+            TextTitle(
+                text = "Add New Product",
+                modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp, vertical = 8.dp)
+            )
+
+            CustomOutlinedTextField(
+                value = productName,
+                onValueChange = { productName = it },
+                label = "Name",
+                modifier = Modifier.fillMaxWidth()
+            )
 
             // Grain Type Dropdown
             DropdownMenuComponent(
@@ -97,6 +117,16 @@ fun AddProductScreen(navController: NavController) {
             )
 
             Spacer(modifier = Modifier.height(4.dp))
+
+            // Is Blend Checkbox
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = isBlend,
+                    onCheckedChange = {
+                        isBlend = it }
+                )
+                Text("Is Blend")
+            }
 
             CustomOutlinedTextField(
                 value = productPrice,
@@ -120,6 +150,7 @@ fun AddProductScreen(navController: NavController) {
             ThreadLaunchingButton(
                 onClick = {
                     val newProduct = Product(
+                        name = productName,
                         grainType = selectedGrainType,
                         roastingPoint = selectedRoastingPoint,
                         price = productPrice.toDoubleOrNull() ?: 0.0, // Handle potential parsing errors
