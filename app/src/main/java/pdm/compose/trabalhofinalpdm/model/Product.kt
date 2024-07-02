@@ -15,6 +15,7 @@ data class Product(
 
 fun Product.toMap(): Map<String, Any> {
     val result = mapOf(
+        "productId" to productId,
         "name" to name,
         "grain Type" to grainType.name,
         "roasting Point" to roastingPoint.name,
@@ -24,6 +25,19 @@ fun Product.toMap(): Map<String, Any> {
     )
     return result
 }
+
+fun Product.toAttributeMap(): Map<String, Any> {
+    val result = mapOf(
+        "name" to name,
+        "grain Type" to grainType.name,
+        "roasting Point" to roastingPoint.name,
+        "price" to price,
+        "isBlend" to isBlend,
+        "imageUrl" to imageUrl
+    )
+    return result
+}
+
 
 
 

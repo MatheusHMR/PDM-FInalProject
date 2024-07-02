@@ -9,7 +9,6 @@ data class Customer(
     val instagram: String = ""
 )
 
-// Extension function to convert Customer object to a Map
 fun Customer.toAttributeMap(): Map<String, String> {
     return mapOf(
         "Cpf" to cpf,

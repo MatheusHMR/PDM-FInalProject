@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -18,28 +19,34 @@ import pdm.compose.trabalhofinalpdm.model.Order
 import pdm.compose.trabalhofinalpdm.ui.components.ConfirmationDialog
 import pdm.compose.trabalhofinalpdm.ui.components.GenericListItem
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
-import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
-import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
-import java.text.DateFormat
+import pdm.compose.trabalhofinalpdm.viewmodel.CustomerViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.OrderViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.CustomerViewModelFactory
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.OrderViewModelFactory
+import pdm.compose.trabalhofinalpdm.viewmodel.factory.ProductViewModelFactory
 
 @Composable
 fun OrderScreen(navController: NavController) {
-    val viewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(
-//            customerRepository = DataProvider.customerRepository,
+
+    val orderViewModel: OrderViewModel = viewModel(
+        factory = OrderViewModelFactory(
             orderRepository = DataProvider.orderRepository
         )
     )
+    val customerViewModel: CustomerViewModel = viewModel(
+        factory = CustomerViewModelFactory(
+            customerRepository = DataProvider.customerRepository
+        )
+    )
 
-    val orders by viewModel.orders.collectAsState()
-    Log.i("OrderScreen", "List of orders: $orders")
+    val orders by orderViewModel.orders.collectAsState()
+    val isLoading by orderViewModel.isLoading.collectAsState()
+    val customers by customerViewModel.customers.collectAsState()
+
+    Log.i("OrderScreen", "Orders: $orders")
     var selectedOrder by remember { mutableStateOf<Order?>(null) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
-
-    // Refresh orders when the screen is recomposed
-    LaunchedEffect(Unit) {
-        viewModel.fetchOrders()
-    }
 
     Scaffold(
         floatingActionButton = {
@@ -54,47 +61,54 @@ fun OrderScreen(navController: NavController) {
                 .fillMaxSize()
         ) {
             TextTitle("Orders")
-            LazyColumn(
-                modifier = Modifier.weight(1f)
-            ) {
-                items(orders) { order ->
-                    var expanded by remember { mutableStateOf(false) }
+            if(isLoading){
+                Box(modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    items(orders) { order ->
+                        var expanded by remember { mutableStateOf(false) }
 
-                    GenericListItem(
-                        item = order,
-                        displayContent = { item ->
-//                            val customers by viewModel.customers.collectAsState()
-//                            val customer = customers.find { it.customerId == item.customerId }
-                            Column {
-                                Text(
-                                    text = "Order: ${item.orderId}",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp
-                                )
-                                Text(
-                                    text = "Date: ${item.date}",
-                                    fontSize = 16.sp
-                                )
-//                                Text(
-//                                    text = "Buyer (customer): ${customer?.name ?: "Loading..."}",
-//                                    fontSize = 16.sp
-//                                )
-                            }
-                        },
-                        onCardClick = { navController.navigate("orders/detailedOrder/${order.orderId}") },
-                        onMoreInfoClick = { navController.navigate("customers/detailedOrder/${order.orderId}") },
-                        onEditClick = {
-                            navController.navigate("customers/editOrder/${order.orderId}")
-                            expanded = false
-                        },
-                        onDeleteClick = {
-                            selectedOrder = order
-                            showDeleteConfirmation = true
-                            expanded = false
-                        },
-                        expanded = expanded,
-                        onExpandChange = { expanded = it }
-                    )
+                        GenericListItem(
+                            item = order,
+                            displayContent = { item ->
+                                val customer = customers.find { it.customerId == item.customerId}
+                                Column {
+                                    Text(
+                                        text = "Order: ${item.orderId}",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp
+                                    )
+                                    Text(
+                                        text = "Date: ${orderViewModel.dateFormatter(item.date)}",
+                                        fontSize = 16.sp
+                                    )
+                                    Text(
+                                        text = "Buyer (customer): ${customer?.name ?: "Loading..."}",
+                                        fontSize = 16.sp
+                                    )
+                                }
+                            },
+                            onCardClick = { navController.navigate("orders/detailedOrder/${order.orderId}") },
+                            onMoreInfoClick = { navController.navigate("orders/detailedOrder/${order.orderId}") },
+                            onEditClick = {
+                                navController.navigate("orders/editOrder/${order.orderId}")
+                                Log.d("OrderScreen", "Order that's going to be edited: $order")
+                                expanded = false
+                            },
+                            onDeleteClick = {
+                                selectedOrder = order
+                                showDeleteConfirmation = true
+                                expanded = false
+                            },
+                            expanded = expanded,
+                            onExpandChange = { expanded = it }
+                        )
+                    }
                 }
             }
         }
@@ -106,8 +120,8 @@ fun OrderScreen(navController: NavController) {
         message = "Are you sure you want to delete \n<<${selectedOrder?.orderId}>>?",
         onConfirm = {
             selectedOrder?.let {
-                viewModel.deleteOrder(it.orderId)
-                navController.popBackStack()
+                orderViewModel.deleteOrder(it.orderId)
+                navController.navigate("orders")
             }
             selectedOrder = null
             showDeleteConfirmation = false

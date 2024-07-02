@@ -18,6 +18,7 @@ import pdm.compose.trabalhofinalpdm.ui.components.TextLabel
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
 import pdm.compose.trabalhofinalpdm.data.DataProvider
 import pdm.compose.trabalhofinalpdm.model.toAttributeMap
+import pdm.compose.trabalhofinalpdm.ui.components.GenericAttributeCard
 import pdm.compose.trabalhofinalpdm.viewmodel.CustomerViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.CustomerViewModelFactory
 
@@ -86,7 +87,7 @@ fun DetailedCustomerScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             TextLabel(text = name)
-                            CustomerAttributeCard(value = value)
+                            GenericAttributeCard(value = value)
                         }
                     }
                 }
@@ -97,25 +98,3 @@ fun DetailedCustomerScreen(
     }
 }
 
-@Composable
-fun CustomerAttributeCard(value: String) {
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-            disabledContentColor = MaterialTheme.colorScheme.onTertiary
-        )
-    ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 16.sp
-            )
-        }
-    }
-}

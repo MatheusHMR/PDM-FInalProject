@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import pdm.compose.trabalhofinalpdm.data.repository.CustomerRepository
 import pdm.compose.trabalhofinalpdm.viewmodel.CustomerViewModel
 
-class CustomerViewModelFactory(private val customerRepository: CustomerRepository) : ViewModelProvider.Factory {
+class CustomerViewModelFactory(
+    private val customerRepository: CustomerRepository
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CustomerViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

@@ -5,24 +5,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pdm.compose.trabalhofinalpdm.data.DataProvider
 import pdm.compose.trabalhofinalpdm.model.Product
 import pdm.compose.trabalhofinalpdm.ui.components.ConfirmationDialog
-import pdm.compose.trabalhofinalpdm.ui.components.GenericActionMenu
 import pdm.compose.trabalhofinalpdm.ui.components.GenericListItem
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
-import pdm.compose.trabalhofinalpdm.viewmodel.MainViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
-import pdm.compose.trabalhofinalpdm.viewmodel.factory.MainViewModelFactory
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.ProductViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,7 +95,8 @@ fun ProductScreen(navController: NavController) {
         onConfirm = {
             selectedProduct?.let {
                 viewModel.deleteProduct(it.productId) // Implement deleteProduct in ViewModel
-                navController.popBackStack()
+//                navController.popBackStack()
+                navController.navigate("products")
             }
             selectedProduct = null
             showDeleteConfirmation = false

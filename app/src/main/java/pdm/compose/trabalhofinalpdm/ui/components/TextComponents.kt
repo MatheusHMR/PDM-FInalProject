@@ -34,13 +34,22 @@ fun TextTitle(
 
 @Composable
 fun TextLabel(
-    text: String = "Empty",
+    modifier: Modifier = Modifier,
+    text: String = "Empty"
 ) {
+    val defaultModifier = Modifier
+        .fillMaxWidth()
+        .padding(start = 8.dp)
+
+    val appliedModifier = if (modifier == Modifier) {
+        defaultModifier // Use default if no custom modifier is provided
+    } else {
+        modifier // Use the provided modifier otherwise
+    }
+
     Text(
         text = text,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp),
+        modifier = appliedModifier,
         textAlign = TextAlign.Start,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp

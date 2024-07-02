@@ -14,7 +14,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pdm.compose.trabalhofinalpdm.data.DataProvider
+import pdm.compose.trabalhofinalpdm.model.toAttributeMap
 import pdm.compose.trabalhofinalpdm.model.toMap
+import pdm.compose.trabalhofinalpdm.ui.components.GenericAttributeCard
 import pdm.compose.trabalhofinalpdm.ui.components.TextLabel
 import pdm.compose.trabalhofinalpdm.ui.components.TextTitle
 import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
@@ -40,7 +42,7 @@ fun DetailedProductScreen(
                 FloatingActionButton(
                     onClick = {
                         navController.navigate("products/editProduct/$productId") // Adjust navigation route
-                        Log.d("ProductDetailsScreen","Product that's going to be edited: ${product.grainType}")
+                        Log.d("ProductDetailsScreen","Product that's going to be edited: ${product!!.name}")
                     }
                 ) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Product")
@@ -71,7 +73,7 @@ fun DetailedProductScreen(
             }
 
             if (product != null) {
-                val productAttributes = product.toMap()
+                val productAttributes = product!!.toAttributeMap()
 
                 TextTitle(
                     text = "Product Details",
@@ -88,36 +90,13 @@ fun DetailedProductScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             TextLabel(text = name)
-                            ProductAttributeCard(value = value.toString())
+                            GenericAttributeCard(value = value.toString())
                         }
                     }
                 }
             } else {
                 Text("Product not found")
             }
-        }
-    }
-}
-
-@Composable
-fun ProductAttributeCard(value: String) {
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary,
-            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-            disabledContentColor = MaterialTheme.colorScheme.onTertiary
-        )
-    ) {
-        Column(modifier = Modifier.padding(8.dp)) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 16.sp
-            )
         }
     }
 }

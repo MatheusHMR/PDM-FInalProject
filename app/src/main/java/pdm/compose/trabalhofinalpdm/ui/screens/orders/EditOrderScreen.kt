@@ -31,15 +31,18 @@ import pdm.compose.trabalhofinalpdm.viewmodel.ProductViewModel
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.CustomerViewModelFactory
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.OrderViewModelFactory
 import pdm.compose.trabalhofinalpdm.viewmodel.factory.ProductViewModelFactory
+import java.util.Calendar
 import java.util.Locale
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "MutableCollectionMutableState")
 @Composable
-fun AddOrderScreen(navController: NavController) {
-
+fun EditOrderScreen(
+    orderId: String, // Pass the orderId to the screen
+    navController: NavController
+) {
     val orderViewModel: OrderViewModel = viewModel(
         factory = OrderViewModelFactory(
-            orderRepository = DataProvider.orderRepository,
+            orderRepository = DataProvider.orderRepository
         )
     )
     val customerViewModel: CustomerViewModel = viewModel(
@@ -55,17 +58,27 @@ fun AddOrderScreen(navController: NavController) {
 
     val customers by customerViewModel.customers.collectAsState()
     val products by productViewModel.products.collectAsState()
+
+    // Find the order to edit
+    val orderToEdit = orderViewModel.orders.collectAsState().value.find { it.orderId == orderId }
+    orderToEdit?.items?.let { orderViewModel.setOrderItems(it) }
+
+    var selectedCustomer by remember { mutableStateOf<Customer?>(orderToEdit?.let { customer ->
+        customers.find { it.customerId == customer.customerId }
+    }) }
+
     val orderItems by orderViewModel.currentOrderItems.collectAsState()
     val orderItemPrices by orderViewModel.orderItemPrices.collectAsState()
 
-    var selectedCustomer by remember { mutableStateOf<Customer?>(null) }
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var quantity by remember { mutableStateOf("1") }
     var currentStep by remember { mutableStateOf(1) }
+    var selectedDate by remember { mutableStateOf(orderToEdit?.date ?: System.currentTimeMillis()) }
 
     val customerOptions = customers.map { "${it.name} - ${it.cpf}" }
     val productOptions = products.map { it.name }
     val productImages = products.map { it.imageUrl }
+
 
     Scaffold(
         floatingActionButton = {
@@ -73,20 +86,28 @@ fun AddOrderScreen(navController: NavController) {
                 FloatingActionButton(onClick = {
                     currentStep = 2
                 }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Continue Order")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "Continue Order"
+                    )
                 }
             } else {
                 FloatingActionButton(onClick = {
-                    val newOrder = Order(
-                        customerId = selectedCustomer?.customerId ?: "",
-                        items = orderItems.toList()
-                    )
-                    Log.d("AddOrderScreen", "New Order")
-                    orderViewModel.addOrder(newOrder)
-//                    navController.popBackStack("orders", inclusive = false)
+                    // Update the order in your ViewModel
+                    orderToEdit?.let { existingOrder ->
+                        val updatedOrder = existingOrder.copy(
+                            customerId = selectedCustomer?.customerId ?: "",
+                            items = orderItems.toList(),
+                            date = selectedDate
+                        )
+                        orderViewModel.updateOrder(updatedOrder)
+                    }
                     navController.navigate("orders")
                 }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Finish Order")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "Finish Order"
+                    )
                 }
             }
         }
@@ -100,14 +121,28 @@ fun AddOrderScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    IconButton(onClick = { navController.navigate("orders") }) { // Adjust navigation route
+                    IconButton(onClick = { navController.navigate("orders") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back to Orders List"
                         )
                     }
+                    TextTitle("Edit Order", modifier = Modifier.padding(horizontal = 60.dp, vertical = 8.dp))
                 }
-                TextTitle("Add New Order")
+
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                OutlinedTextField(
+                    value = orderId ?: "", // Display the orderId
+                    onValueChange = { /* Do nothing, field is disabled */ },
+                    label = { Text("Order ID") },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = false // Disable the field
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 DropdownMenuComponent(
                     label = "Select Product",
@@ -135,7 +170,7 @@ fun AddOrderScreen(navController: NavController) {
                     onClick = {
                         selectedProduct?.let { product ->
                             val newItem = OrderItem(product.productId, quantity.toInt())
-                            orderViewModel.addOrderItem(newItem) //Trigger price calculation and updates the
+                            orderViewModel.addOrderItem(newItem)
                         }
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -168,6 +203,7 @@ fun AddOrderScreen(navController: NavController) {
                         )
                     }
                 }
+
             }
         } else {
             Column(
@@ -185,7 +221,7 @@ fun AddOrderScreen(navController: NavController) {
                         )
                     }
                 }
-                TextTitle("Finalize Order")
+                TextTitle("Finalize Order Edition")
 
                 DropdownMenuComponent(
                     label = "Select Customer",
@@ -202,6 +238,7 @@ fun AddOrderScreen(navController: NavController) {
                     items(orderItems) { orderItem ->
                         var expanded by remember { mutableStateOf(false) }
                         val calculatedPrice = orderItemPrices[orderItem.productId]
+                        Log.d("EditOrderScreen", "")
 
                         GenericListItem(
                             item = orderItem,

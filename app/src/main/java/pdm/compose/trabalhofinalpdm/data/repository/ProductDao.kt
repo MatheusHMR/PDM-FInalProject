@@ -16,7 +16,9 @@ class ProductDao (
     suspend fun addProduct(product: Product) {
         val newDocRef = collection.document()
         val productWithId = product.copy(productId = newDocRef.id)
+        Log.d("ProductDao", "Product Copied With Id: $productWithId")
         val productMap = productWithId.toMap()
+        Log.d("ProductDao", "Product map: $productMap")
         newDocRef.set(productWithId).addOnSuccessListener {
             Log.d("ProductRepository", "Product added with ID: ${productWithId.productId}")
             Log.d("ProductRepository", "Product added with blend: ${productWithId.isBlend}")

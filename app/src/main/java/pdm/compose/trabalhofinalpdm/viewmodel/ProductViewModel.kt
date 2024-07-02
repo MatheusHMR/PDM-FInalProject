@@ -8,11 +8,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pdm.compose.trabalhofinalpdm.data.repository.ProductRepository
+import pdm.compose.trabalhofinalpdm.domain.usecases.DeleteProductAndRelatedOrdersUseCase
 import pdm.compose.trabalhofinalpdm.model.Product
 
 class ProductViewModel (
     private val productRepository: ProductRepository
 ) : ViewModel() {
+
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products.asStateFlow()
 
@@ -30,7 +32,6 @@ class ProductViewModel (
     fun addProduct(product: Product){
         viewModelScope.launch {
             Log.d("ProductViewModel", "Adding: $product")
-            Log.d("ProductViewModel", "Product blend: ${product.isBlend}")
             productRepository.addProduct(product)
             _products.value = fetchProducts()
         }
@@ -47,10 +48,15 @@ class ProductViewModel (
     fun deleteProduct(productId: String) {
         viewModelScope.launch {
             Log.d("ProductViewModel", "Deleting product of Id: $productId")
-            productRepository.delete(productId)
-            _products.value = fetchProducts()
+            val deleted = DeleteProductAndRelatedOrdersUseCase.invoke(productId)
+            if(deleted) {
+                _products.value = fetchProducts()
+//                productEventsHandler.onProductDeleted(viewModelScope)
+            }
         }
     }
+
+
 
 
 }

@@ -3,18 +3,30 @@ package pdm.compose.trabalhofinalpdm.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pdm.compose.trabalhofinalpdm.data.repository.CustomerRepository
+import pdm.compose.trabalhofinalpdm.domain.usecases.DeleteCustomerAndRelatedOrdersUseCase
 import pdm.compose.trabalhofinalpdm.model.Customer
 
 class CustomerViewModel(
     private val customerRepository: CustomerRepository
 ) : ViewModel() {
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     private val _customers = MutableStateFlow<List<Customer>>(emptyList())
     val customers: StateFlow<List<Customer>> = _customers.asStateFlow()
+
+    private val _customerDeletedEvent = MutableSharedFlow<Unit>()
+    val customerDeletedEvent: SharedFlow<Unit> = _customerDeletedEvent.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -27,16 +39,15 @@ class CustomerViewModel(
         return customerRepository.getAll()
     }
 
-    suspend fun getCustomerById(customerId: String): Customer? {
-        Log.d("CustomerViewModel", "Searching for Id: $customerId")
-        return customerRepository.getOneById(customerId)?.toObject(Customer::class.java)
-    }
-
     fun addCustomer(customer: Customer) {
         viewModelScope.launch {
+            _isLoading.value = true
             Log.d("CustomerViewModel", "Adding: $customer")
-            customerRepository.addCustomer(customer)
-            _customers.value = fetchCustomers()
+            val success = customerRepository.addCustomer(customer)
+            if(success) {
+                _customers.value = fetchCustomers()
+            }
+            _isLoading.value = false
         }
     }
 
@@ -51,8 +62,10 @@ class CustomerViewModel(
     fun deleteCustomer(customerId: String) {
         viewModelScope.launch {
             Log.d("CustomerViewModel", "Deleting customer of Id: $customerId")
-            customerRepository.delete(customerId)
-            _customers.value = fetchCustomers()
+            val deleted = DeleteCustomerAndRelatedOrdersUseCase.invoke(customerId)
+            if(deleted) {
+                _customers.value = fetchCustomers()
+            }
         }
     }
 }
